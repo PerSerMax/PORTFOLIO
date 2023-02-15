@@ -145,12 +145,3 @@ class Matrix:
 
     def line(self, key):
         return self[key]
-
-
-a = Matrix([0, 0, 0, 0, 0, 0, 0, 0, -1, -2, 0, 0], 3, 4)
-b = Matrix(range(16), 4, 4)
-print(a)
-print(Calc.rank(a)[0], Calc.rank(a)[1])
-
-print(b)
-print(Calc.rank(b)[0], Calc.rank(b)[1])
