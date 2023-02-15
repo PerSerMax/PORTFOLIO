@@ -14,6 +14,18 @@ class Misc:
                 output_list.append(i)
         return output_list
 
+    @staticmethod
+    def helloWorld():
+        print \
+            ("""
+inv(input_list) - количество инверсий
+scalMul(vector_1, vector_2) - скалярное произведение векторов
+tranp(matrix) - транспонирует матрицу
+det(matrix) - определитель матрицы
+rank(matrix) - ранг матрицы
+Matrix(values, num_of_lines, num_of_columns) - создание матрицы, где values - значения матрицы, num_of_lines - число строк, num_of_columns - число столбцов
+        """)
+
 
 class Calc:
     @staticmethod
@@ -37,24 +49,12 @@ class Calc:
         return su
 
     @staticmethod
-    def matMul(matrix_1, matrix_2):
-        if matrix_1.num_of_columns != matrix_2.num_of_lines:
-            print("I can't prod this")
-            return None
-        prod = Matrix(range(matrix_1.num_of_lines * matrix_2.num_of_columns), matrix_1.num_of_lines,
-                      matrix_2.num_of_columns)
-        for i in range(matrix_1.num_of_lines):
-            for j in range(matrix_2.num_of_columns):
-                prod[i][j] = Calc.scalMul(matrix_1.line(i), matrix_2.col(j))
-        return prod
-
-    @staticmethod
     def tranp(matrix):
         values = Misc.unpack([matrix.col(i) for i in range(matrix.num_of_columns)])
         return Matrix(values, matrix.num_of_columns, matrix.num_of_lines)
 
     @staticmethod
-    def minor(matrix, lines, columns):
+    def __minor(matrix, lines, columns):
         lines = sorted(list(lines))
         columns = sorted(list(columns))
         minor = Matrix(range(len(lines) * len(columns)), len(lines), len(columns))
@@ -64,7 +64,7 @@ class Calc:
         return minor
 
     @staticmethod
-    def algDop(matrix, lines, columns):
+    def __algDop(matrix, lines, columns):
         lines = sorted(set(range(matrix.num_of_lines)) - set(lines))
         columns = sorted(set(range(matrix.num_of_columns)) - set(columns))
         minor = Matrix(range(len(lines) * len(columns)), len(lines), len(columns))
@@ -83,7 +83,7 @@ class Calc:
         else:
             su = 0
             for i in range(matrix.num_of_lines):
-                su += matrix[0][i] * Calc.det(Calc.algDop(matrix, [0], [i])) * (-1 if i % 2 else 1)
+                su += matrix[0][i] * Calc.det(Calc.__algDop(matrix, [0], [i])) * (-1 if i % 2 else 1)
             return su
 
     @staticmethod
@@ -92,12 +92,14 @@ class Calc:
             return 0, 0
         if matrix.num_of_columns == matrix.num_of_lines and Calc.det(matrix) != 0:
             return matrix, matrix.num_of_columns
-        list_of_lines = list(itertools.combinations(range(matrix.num_of_lines), max(matrix.num_of_columns, matrix.num_of_lines) - 1))
-        list_of_columns = list(itertools.combinations(range(matrix.num_of_columns),max(matrix.num_of_columns, matrix.num_of_lines) - 1))
+        list_of_lines = list(
+            itertools.combinations(range(matrix.num_of_lines), max(matrix.num_of_columns, matrix.num_of_lines) - 1))
+        list_of_columns = list(
+            itertools.combinations(range(matrix.num_of_columns), max(matrix.num_of_columns, matrix.num_of_lines) - 1))
         list_of_minors = []
         for i in list_of_lines:
             for j in list_of_columns:
-                minor = Calc.minor(matrix, i, j)
+                minor = Calc.__minor(matrix, i, j)
                 if Calc.det(minor) != 0:
                     return minor, minor.num_of_columns
                 list_of_minors.append(minor)
@@ -113,8 +115,6 @@ class Matrix:
     def __init__(self, values, num_of_lines, num_of_columns=None):
         self.num_of_lines, self.num_of_columns = num_of_lines, num_of_columns or num_of_lines
         self.matrix = [[] for _ in range(self.num_of_lines)]
-        if values == 0:
-            values = [0 for _ in range(self.num_of_lines * self.num_of_columns)]
 
         if len(values) != self.num_of_lines * self.num_of_columns:
             print('MatrixSizeError')
@@ -134,7 +134,8 @@ class Matrix:
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return Matrix(Misc.unpack(self.matrix[key.start:key.stop:key.step]), len(self.matrix[key.start:key.stop:key.step]), self.num_of_columns)
+            return Matrix(Misc.unpack(self.matrix[key.start:key.stop:key.step]),
+                          len(self.matrix[key.start:key.stop:key.step]), self.num_of_columns)
         return self.matrix[key]
 
     def __setitem__(self, key, value):
@@ -145,3 +146,58 @@ class Matrix:
 
     def line(self, key):
         return self[key]
+
+    def __add__(self, other):
+        if isinstance(other, Matrix):
+            if self.num_of_lines != other.num_of_lines or self.num_of_columns != other.num_of_columns:
+                print('MatAddSizeError')
+            matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
+                            self.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(self.num_of_columns):
+                    matrix[i][j] = self[i][j] + other[i][j]
+            return matrix
+        elif isinstance(other, int) or isinstance(other, float):
+            matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
+                            self.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(self.num_of_columns):
+                    matrix[i][j] = self[i][j] + other
+            return matrix
+
+    def __sub__(self, other):
+        if isinstance(other, Matrix):
+            if self.num_of_lines != other.num_of_lines or self.num_of_columns != other.num_of_columns:
+                print('MatAddSizeError')
+            matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
+                            self.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(self.num_of_columns):
+                    matrix[i][j] = self[i][j] - other[i][j]
+            return matrix
+        elif isinstance(other, int) or isinstance(other, float):
+            matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
+                            self.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(self.num_of_columns):
+                    matrix[i][j] = self[i][j] - other
+            return matrix
+
+    def __mul__(self, other):
+        if isinstance(other, Matrix):
+            if self.num_of_columns != other.num_of_lines:
+                print("I can't prod this")
+                return None
+            matrix = Matrix(range(self.num_of_lines * other.num_of_columns), self.num_of_lines,
+                            other.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(other.num_of_columns):
+                    matrix[i][j] = Calc.scalMul(self.line(i), other.col(j))
+            return matrix
+        elif isinstance(other, int) or isinstance(other, float):
+            matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
+                            self.num_of_columns)
+            for i in range(self.num_of_lines):
+                for j in range(self.num_of_columns):
+                    matrix[i][j] = self[i][j] * other
+            return matrix
