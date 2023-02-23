@@ -1,5 +1,6 @@
 import sys
 import itertools
+import time
 
 
 class Misc:
@@ -40,11 +41,30 @@ class Misc:
 inv(input_list) - количество инверсий
 scalMul(vector_1, vector_2) - скалярное произведение векторов
 tranp(matrix) - транспонирует матрицу
-det(matrix) - определитель матрицы
-rank(matrix) - ранг матрицы
+matrix.det - определитель матрицы
+matrix.rank - ранг матрицы
 Matrix(values, num_of_lines, num_of_columns) - создание матрицы, 
 где values - значения матрицы, num_of_lines - число строк, num_of_columns - число столбцов
         """)
+
+    @staticmethod
+    def is_str(a, b):       #нейросеть понимает текст по русски
+        sovpadeniya = 0
+        for i in range(min(len(a), len(b))):
+            if a[i] == a[i]:
+                sovpadeniya += 1
+
+        if sovpadeniya >= 0.8 * len(a):
+            return True
+        return False
+
+    @staticmethod
+    def timer(obj, *args, **kwargs):
+        if str(type(obj)) == "<class 'function'>":
+            start = time.time()
+            obj(*args, **kwargs)
+            print(time.time() - start)
+            return
 
 
 class Calc:
@@ -60,13 +80,11 @@ class Calc:
 
     @staticmethod
     def scal_mul(vector_1, vector_2):
-        su = 0
-        if len(vector_1) != len(vector_2):
-            print("I can't prod these vectors")
-            return None
+        scal_mul = 0
+        assert len(vector_1) != len(vector_2), "I can't prod these vectors"
         for i in range(len(vector_1)):
-            su += vector_1[i] * vector_2[i]
-        return su
+            scal_mul += vector_1[i] * vector_2[i]
+        return scal_mul
 
     @staticmethod
     def transpose(matrix):
@@ -95,9 +113,7 @@ class Calc:
 
     @staticmethod
     def det(matrix):
-        if matrix.num_of_columns != matrix.num_of_lines:
-            print('Not square matrix')
-            sys.exit()
+        assert matrix.num_of_columns == matrix.num_of_lines, 'Not square matrix'
         if matrix.num_of_columns == 1:
             return matrix[0][0]
         elif matrix.num_of_columns == 2:
@@ -113,7 +129,7 @@ class Calc:
     @staticmethod
     def rank(matrix, size=1):
         if matrix.num_of_columns * matrix.num_of_lines == 0:
-            return None
+            return 0, 0
         list_of_lines = itertools.combinations(range(matrix.num_of_lines), size)
         list_of_columns = itertools.combinations(range(matrix.num_of_columns), size)
         for i in list_of_lines:
@@ -136,16 +152,14 @@ class Matrix:
             self.num_of_lines, self.num_of_columns = num_of_lines, num_of_columns or num_of_lines
             self.matrix = [[] for _ in range(self.num_of_lines)]
 
-            if len(values) != self.num_of_lines * self.num_of_columns:
-                print('MatrixSizeError')
-                sys.exit()
+            assert len(values) == self.num_of_lines * self.num_of_columns, 'MatrixSizeError'
 
             for i in range(self.num_of_lines):
                 for j in range(self.num_of_columns):
                     self.matrix[i].append(values[self.num_of_columns * i + j])
 
     def __str__(self):
-        output = str()
+        output = ''
         max_len = max([len(str(i)) for i in Misc.unpack(self.matrix)])
         for line in self.matrix:
             for j in line:
@@ -154,7 +168,7 @@ class Matrix:
                 else:
                     output += str(j) + ' ' * (1 + max_len - len(str(j)))
             output += '\n'
-        return output + '\n'
+        return output + '\n\r'
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -188,8 +202,7 @@ class Matrix:
 
     def __add__(self, other):
         if isinstance(other, Matrix):
-            if self.num_of_lines != other.num_of_lines or self.num_of_columns != other.num_of_columns:
-                print('MatAddSizeError')
+            assert self.num_of_lines == other.num_of_lines and self.num_of_columns == other.num_of_columns, 'MatAddSizeError'
             matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
                             self.num_of_columns)
             for i in range(self.num_of_lines):
@@ -206,8 +219,7 @@ class Matrix:
 
     def __sub__(self, other):
         if isinstance(other, Matrix):
-            if self.num_of_lines != other.num_of_lines or self.num_of_columns != other.num_of_columns:
-                print('MatAddSizeError')
+            assert self.num_of_lines == other.num_of_lines and self.num_of_columns == other.num_of_columns, 'MatAddSizeError'
             matrix = Matrix(range(self.num_of_lines * self.num_of_columns), self.num_of_lines,
                             self.num_of_columns)
             for i in range(self.num_of_lines):
@@ -224,9 +236,7 @@ class Matrix:
 
     def __mul__(self, other):
         if isinstance(other, Matrix):
-            if self.num_of_columns != other.num_of_lines:
-                print("I can't prod this")
-                return None
+            assert self.num_of_columns == other.num_of_lines, "I can't prod this"
             matrix = Matrix(range(self.num_of_lines * other.num_of_columns), self.num_of_lines,
                             other.num_of_columns)
             for i in range(self.num_of_lines):
