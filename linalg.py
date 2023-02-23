@@ -48,7 +48,7 @@ Matrix(values, num_of_lines, num_of_columns) - создание матрицы,
         """)
 
     @staticmethod
-    def is_str(a, b):       #нейросеть понимает текст по русски
+    def is_str(a, b):  # нейросеть понимает текст по русски
         sovpadeniya = 0
         for i in range(min(len(a), len(b))):
             if a[i] == a[i]:
@@ -194,12 +194,6 @@ class Matrix:
             self.tran = Calc.transpose(self)
             return self.tran
 
-    def col(self, key):
-        return [i[key] for i in self.matrix]
-
-    def line(self, key):
-        return self[key]
-
     def __add__(self, other):
         if isinstance(other, Matrix):
             assert self.num_of_lines == other.num_of_lines and self.num_of_columns == other.num_of_columns, 'MatAddSizeError'
@@ -250,3 +244,9 @@ class Matrix:
                 for j in range(self.num_of_columns):
                     matrix[i][j] = self[i][j] * other
             return matrix
+
+    def col(self, key):
+        return [i[key] for i in self.matrix]
+
+    def line(self, key):
+        return self[key]
