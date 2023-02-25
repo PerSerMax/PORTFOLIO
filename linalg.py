@@ -2,8 +2,16 @@ import sys
 import itertools
 import time
 
-
 __all__ = ['Calc', 'Matrix']
+print("""
+inv(input_list) - количество инверсий
+scalMul(vector_1, vector_2) - скалярное произведение векторов
+tranp(matrix) - транспонирует матрицу
+matrix.det - определитель матрицы
+matrix.rank - ранг матрицы
+Matrix(values, num_of_lines, num_of_columns) - создание матрицы, 
+где values - значения матрицы, num_of_lines - число строк, num_of_columns - число столбцов
+        """)
 
 
 class Misc:
@@ -36,19 +44,6 @@ class Misc:
             lines.append(line)
         matrix.num_of_lines = len(lines)
         matrix.matrix = lines
-
-    @staticmethod
-    def hello_world():
-        print \
-            ("""
-inv(input_list) - количество инверсий
-scalMul(vector_1, vector_2) - скалярное произведение векторов
-tranp(matrix) - транспонирует матрицу
-matrix.det - определитель матрицы
-matrix.rank - ранг матрицы
-Matrix(values, num_of_lines, num_of_columns) - создание матрицы, 
-где values - значения матрицы, num_of_lines - число строк, num_of_columns - число столбцов
-        """)
 
     @staticmethod
     def is_str(a, b):  # нейросеть понимает текст по русски
