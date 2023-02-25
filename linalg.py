@@ -3,6 +3,9 @@ import itertools
 import time
 
 
+__all__ = ['Calc', 'Matrix']
+
+
 class Misc:
     @staticmethod
     def unpack(input_list):
