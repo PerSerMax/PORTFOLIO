@@ -80,7 +80,7 @@ class Calc:
     @staticmethod
     def scal_mul(vector_1, vector_2):
         scal_mul = 0
-        assert len(vector_1) != len(vector_2), "I can't prod these vectors"
+        assert len(vector_1) == len(vector_2), "I can't prod these vectors"
         for i in range(len(vector_1)):
             scal_mul += vector_1[i] * vector_2[i]
         return scal_mul
