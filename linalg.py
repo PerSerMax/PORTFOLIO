@@ -57,10 +57,11 @@ class Misc:
         return False
 
     @staticmethod
-    def timer(obj, *args, **kwargs):
+    def timer(obj, *args, reps=1):
         if str(type(obj)) == "<class 'function'>":
             start = time.time()
-            obj(*args, **kwargs)
+            for i in range(reps):
+                obj(*args)
             print(time.time() - start)
             return
 
