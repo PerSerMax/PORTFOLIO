@@ -3,7 +3,7 @@ import itertools
 import time
 
 __all__ = ['Calc', 'Matrix']
-if __name__ != "__main__":
+if __name__ == "__main__":
     print("""
     inv(input_list) - количество инверсий
     scalMul(vector_1, vector_2) - скалярное произведение векторов
