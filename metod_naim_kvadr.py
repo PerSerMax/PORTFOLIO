@@ -32,5 +32,9 @@ expr = np.array(matrix)
 
 output = np.linalg.solve(expr, p)
 
+for i in range(num_of_params):
+    if abs(output[i] - int(output[i])) < 10**(-14):
+        output[i] = int(output[i])
+
 print(output)
 
