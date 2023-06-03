@@ -1,7 +1,7 @@
 import numpy as np
 
-param = int(input())
-sum_l = (param - 1) * 2
+num_of_params = int(input())
+num_of_sums = (num_of_params - 1) * 2
 
 x = input()
 x = x.split(' ')
@@ -14,23 +14,23 @@ y = [float(i) for i in y]
 n = len(x)
 
 s = []
-for i in range(1, sum_l + 1):
+for i in range(1, num_of_sums + 1):
     s.append(sum([j**i for j in x]))
 s.reverse()
 s.append(n)
 
 p = []
-for i in range(param):
+for i in range(num_of_params):
     p.append(sum([a**i * b for (a, b) in zip(x, y)]))
 p.reverse()
 
-matr = []
-for i in range(param):
-    matr.append(s[i:i+param])
+matrix = []
+for i in range(num_of_params):
+    matrix.append(s[i:i + num_of_params])
 
-expr = np.array(matr)
+expr = np.array(matrix)
 
-abcde = np.linalg.solve(expr, p)
+output = np.linalg.solve(expr, p)
 
-print(abcde)
+print(output)
 
