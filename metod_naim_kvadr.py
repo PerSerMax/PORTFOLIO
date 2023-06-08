@@ -30,7 +30,7 @@ def meth_naim_kv(x, y, num_of_params):
     return output
 
 
-n_p = 4  #Количество параметров
+n_p = 3  #Количество параметров
 
 x = input('')
 x = x.split(' ')
@@ -43,6 +43,8 @@ y = [float(i) for i in y]
 n = len(x)
 
 params = list(meth_naim_kv(x,  y, n_p))
+params = [round(i, 8) for i in params]
+print(params)
 params.reverse()
 
 plt.scatter(x, y)
