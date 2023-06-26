@@ -208,10 +208,14 @@ decimal d_sub(decimal* d1, decimal* d2) {
 		{
 			if (d3.data.v_data[i] < d2->data.v_data[i])
 			{
-
+				d3.data.v_data[i + 1] -= 1;
 			}
 			d3.data.v_data[i] -= d2->data.v_data[i];
 		}
+		while (d3.data.v_data[d3.data.loaded - 1] == 0 && d3.data.loaded > 1) {
+			pop_back(&d3);
+		}
+		return d3;
 	}
 	else if (comp == -1) {
 		d3.sign = -1;
@@ -221,13 +225,21 @@ decimal d_sub(decimal* d1, decimal* d2) {
 		}
 		for (size_t i = 0; i < d1->data.loaded; i++)
 		{
+			if (d3.data.v_data[i] < d1->data.v_data[i])
+			{
+				d3.data.v_data[i + 1] -= 1;
+			}
 			d3.data.v_data[i] -= d1->data.v_data[i];
 		}
+		while (d3.data.v_data[d3.data.loaded - 1] == 0 && d3.data.loaded > 1) {
+			pop_back(&d3);
+		}
+		return d3;
 	}
-	while (d3.data.v_data[d3.data.loaded - 1] == 0 && d3.data.loaded > 1) {
-		pop_back(&d3);
+	else {
+		push_back(&d3.data, 0);
+		return d3;
 	}
-	return d3;
 }
 
 //DECIMAL END
@@ -236,15 +248,11 @@ decimal d_sub(decimal* d1, decimal* d2) {
 
 int main() {
 	decimal d1 = to_decimal(4825741578143);
-	decimal d2 = to_decimal(4825741578143);
-	decimal d3 = d_sum(&d1, &d2);
-	vector v = new_vector();
-	for (size_t i = 0; i < 500; i++)
-	{
-		push_back(&v, i);
-	}
-	print_vector(&v);
-	system("pause");
-	delete_vector(&v);
+	decimal d2 = to_decimal(4225741578142);
+	print_decimal(&d1);
+	print_decimal(&d2);
+	decimal d3 = d_sub(&d2, &d1);
+	print_decimal(&d3);
+
 	system("pause");
 }
